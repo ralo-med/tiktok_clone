@@ -177,9 +177,11 @@ class _InterestsScreenState extends State<InterestsScreen> {
       ),
       bottomNavigationBar: Container(
         color: Colors.grey.shade100,
-        padding: const EdgeInsets.symmetric(
-          vertical: Sizes.size32,
-          horizontal: Sizes.size40,
+        padding: const EdgeInsets.only(
+          bottom: Sizes.size32, // bottom은 그대로
+          top: Sizes.size16, // top을 줄임 (32에서 16으로)
+          left: Sizes.size40,
+          right: Sizes.size40,
         ),
         child: GestureDetector(
           onTap: _selectedInterests.isEmpty ? null : _onNextTap,
