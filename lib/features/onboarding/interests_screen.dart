@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/features/onboarding/widgets/interest_button.dart';
+import 'package:tiktok_clone/features/onboarding/turotial_screen.dart';
 
 const interests = [
   "Daily Life",
@@ -32,6 +34,25 @@ const interests = [
   "Education",
   "News",
   "Politics",
+  "Daily Life",
+  "Comedy",
+  "Entertainment",
+  "Animals",
+  "Food",
+  "Beauty & Style",
+  "Drama",
+  "Learning",
+  "Talent",
+  "Sports",
+  "Auto",
+  "Family",
+  "Fitness & Health",
+  "DIY & Life Hacks",
+  "Arts & Crafts",
+  "Dance",
+  "Outdoors",
+  "Oddly Satisfying",
+  "Home & Garden",
 ];
 
 class InterestsScreen extends StatefulWidget {
@@ -42,7 +63,24 @@ class InterestsScreen extends StatefulWidget {
 }
 
 class _InterestsScreenState extends State<InterestsScreen> {
+  final ScrollController _scrollController = ScrollController();
   final Set<String> _selectedInterests = {};
+
+  bool _showTitle = false;
+
+  bool _onScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollUpdateNotification) {
+      final shouldShowTitle = notification.metrics.pixels > 100;
+
+      // 상태가 실제로 변경될 때만 setState 호출
+      if (shouldShowTitle != _showTitle) {
+        setState(() {
+          _showTitle = shouldShowTitle;
+        });
+      }
+    }
+    return false;
+  }
 
   void _onInterestTap(String interest) {
     setState(() {
@@ -56,88 +94,84 @@ class _InterestsScreenState extends State<InterestsScreen> {
 
   void _onNextTap() {
     if (_selectedInterests.isEmpty) return;
-    // 여기에 다음 화면으로 이동하는 로직 추가
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const TutorialScreen(),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Choose your interests"),
+        title: AnimatedOpacity(
+          opacity: _showTitle ? 1 : 0,
+          duration: const Duration(milliseconds: 300),
+          child: const Text("Choose your interests"),
+        ),
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(
-              left: Sizes.size24, right: Sizes.size24, bottom: Sizes.size16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Gaps.v32,
-              const Text(
-                "Choose your interests",
-                style: TextStyle(
-                  fontSize: Sizes.size40,
-                  fontWeight: FontWeight.bold,
-                ),
+      body: Scrollbar(
+        controller: _scrollController,
+        child: NotificationListener<ScrollNotification>(
+          onNotification: _onScrollNotification,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: Sizes.size24,
+                right: Sizes.size24,
+                bottom: Sizes.size16,
               ),
-              Gaps.v20,
-              const Text(
-                "Get better video recommendations",
-                style: TextStyle(
-                  fontSize: Sizes.size20,
-                ),
-              ),
-              Gaps.v48,
-              Wrap(
-                runSpacing: 15,
-                spacing: 15,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (var interest in interests)
-                    GestureDetector(
-                      onTap: () => _onInterestTap(interest),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: Sizes.size12,
-                          horizontal: Sizes.size24,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _selectedInterests.contains(interest)
-                              ? Theme.of(context).primaryColor
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(
-                            Sizes.size32,
-                          ),
-                          border: Border.all(
-                            color: _selectedInterests.contains(interest)
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey.shade300,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(13),
-                              blurRadius: 5,
-                              spreadRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          interest,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: _selectedInterests.contains(interest)
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                        ),
-                      ),
-                    )
+                  Gaps.v20,
+                  const Text(
+                    "Choose your interests",
+                    style: TextStyle(
+                      fontSize: Sizes.size40,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Gaps.v20,
+                  const Text(
+                    "Get better video recommendations",
+                    style: TextStyle(
+                      fontSize: Sizes.size20,
+                    ),
+                  ),
+                  Gaps.v48,
+                  Wrap(
+                    runSpacing: 15,
+                    spacing: 15,
+                    children: [
+                      for (var interest in interests)
+                        InterestButton(
+                          interest: interest,
+                          isSelected: _selectedInterests.contains(interest),
+                          onTap: () => _onInterestTap(interest),
+                        )
+                    ],
+                  )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
         ),
       ),
