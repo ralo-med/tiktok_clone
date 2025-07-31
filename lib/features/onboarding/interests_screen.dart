@@ -94,10 +94,11 @@ class _InterestsScreenState extends State<InterestsScreen> {
 
   void _onNextTap() {
     if (_selectedInterests.isEmpty) return;
-    Navigator.of(context).push(
+    Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => const TutorialScreen(),
       ),
+      (route) => false,
     );
   }
 
@@ -179,7 +180,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
         color: Colors.grey.shade100,
         padding: const EdgeInsets.only(
           bottom: Sizes.size32, // bottom은 그대로
-          top: Sizes.size16, // top을 줄임 (32에서 16으로)
+          top: Sizes.size20, // top을 줄임 (32에서 16으로)
           left: Sizes.size40,
           right: Sizes.size40,
         ),
