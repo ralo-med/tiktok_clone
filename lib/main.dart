@@ -15,7 +15,7 @@ class TikTokApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: const Color(0xFFE9435A),
       ),
-      home: const MainNavigation(),
+      home: const MainNavigationScreen(),
     );
   }
 }
