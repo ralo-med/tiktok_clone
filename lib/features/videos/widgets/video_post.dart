@@ -26,6 +26,7 @@ class _VideoPostState extends State<VideoPost>
   final Duration _animationDuration = const Duration(milliseconds: 200);
 
   late final AnimationController _animationController;
+  late final Animation<double> _scaleAnimation;
 
   bool _isPaused = false;
 
@@ -56,14 +57,18 @@ class _VideoPostState extends State<VideoPost>
       value: 1.5,
       duration: _animationDuration,
     );
-    _animationController.addListener(() {
-      setState(() {});
-    });
+
+    // 애니메이션 객체 생성 - setState 호출 없이 애니메이션 값 사용
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.5,
+    ).animate(_animationController);
   }
 
   @override
   void dispose() {
     _videoPlayerController.dispose();
+    _animationController.dispose(); // 애니메이션 컨트롤러 dispose 추가
     super.dispose();
   }
 
@@ -108,17 +113,22 @@ class _VideoPostState extends State<VideoPost>
           Positioned.fill(
             child: IgnorePointer(
               child: Center(
-                child: Transform.scale(
-                  scale: _animationController.value,
-                  child: AnimatedOpacity(
-                    opacity: _isPaused ? 1 : 0,
-                    duration: _animationDuration,
-                    child: const FaIcon(
-                      FontAwesomeIcons.play,
-                      color: Colors.white,
-                      size: Sizes.size52,
-                    ),
-                  ),
+                child: AnimatedBuilder(
+                  animation: _scaleAnimation,
+                  builder: (context, child) {
+                    return Transform.scale(
+                      scale: _scaleAnimation.value,
+                      child: AnimatedOpacity(
+                        opacity: _isPaused ? 1 : 0,
+                        duration: _animationDuration,
+                        child: const FaIcon(
+                          FontAwesomeIcons.play,
+                          color: Colors.white,
+                          size: Sizes.size52,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
