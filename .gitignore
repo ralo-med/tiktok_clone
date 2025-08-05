@@ -34,6 +34,9 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Assets (비디오, 이미지 등 큰 파일들)
+assets/
+
 # Symbolication related
 app.*.symbols
 
