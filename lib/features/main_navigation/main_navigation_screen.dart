@@ -58,7 +58,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        color: Colors.black,
+        color: _selectedIndex == 0 ? Colors.black : Colors.white,
         child: SafeArea(
           top: false,
           child: Padding(
@@ -72,6 +72,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   icon: FontAwesomeIcons.house,
                   selectedIcon: FontAwesomeIcons.house,
                   onTap: () => _onTap(0),
+                  isDarkMode: _selectedIndex == 0,
                 ),
                 NavTab(
                   text: "Discover",
@@ -79,11 +80,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   icon: FontAwesomeIcons.compass,
                   selectedIcon: FontAwesomeIcons.solidCompass,
                   onTap: () => _onTap(1),
+                  isDarkMode: _selectedIndex == 0,
                 ),
                 Gaps.h24,
                 GestureDetector(
                   onTap: _onPostVideoButtonTap,
-                  child: const PostVideoButton(),
+                  child: PostVideoButton(
+                    isDarkMode: _selectedIndex == 0,
+                  ),
                 ),
                 Gaps.h24,
                 NavTab(
@@ -92,6 +96,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   icon: FontAwesomeIcons.message,
                   selectedIcon: FontAwesomeIcons.solidMessage,
                   onTap: () => _onTap(3),
+                  isDarkMode: _selectedIndex == 0,
                 ),
                 NavTab(
                   text: "Profile",
@@ -99,6 +104,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   icon: FontAwesomeIcons.user,
                   selectedIcon: FontAwesomeIcons.solidUser,
                   onTap: () => _onTap(4),
+                  isDarkMode: _selectedIndex == 0,
                 ),
               ],
             ),

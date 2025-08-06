@@ -4,10 +4,12 @@ import 'package:tiktok_clone/constants/sizes.dart';
 
 class PostVideoButton extends StatefulWidget {
   final VoidCallback? onTap;
+  final bool isDarkMode;
 
   const PostVideoButton({
     super.key,
     this.onTap,
+    this.isDarkMode = true,
   });
 
   @override
@@ -144,31 +146,33 @@ class _PostVideoButtonState extends State<PostVideoButton>
                       ),
                     ),
                   ),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                  Container(
                     height: 30,
                     padding: const EdgeInsets.symmetric(
                       horizontal: Sizes.size12,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: widget.isDarkMode ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(
                         Sizes.size6,
                       ),
                       boxShadow: _isPressed
                           ? [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
+                                color: (widget.isDarkMode
+                                        ? Colors.black
+                                        : Colors.white)
+                                    .withValues(alpha: 0.1),
                                 blurRadius: 4,
                                 spreadRadius: 1,
                               )
                             ]
                           : null,
                     ),
-                    child: const Center(
+                    child: Center(
                       child: FaIcon(
                         FontAwesomeIcons.plus,
-                        color: Colors.black,
+                        color: widget.isDarkMode ? Colors.black : Colors.white,
                         size: 18,
                       ),
                     ),
