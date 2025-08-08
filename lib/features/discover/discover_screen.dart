@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 
 final tabs = [
@@ -11,14 +14,62 @@ final tabs = [
   "Brands",
 ];
 
-class DiscoverScreen extends StatelessWidget {
+class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
+
+  @override
+  State<DiscoverScreen> createState() => _DiscoverScreenState();
+}
+
+class _DiscoverScreenState extends State<DiscoverScreen> {
+  final TextEditingController _textEditingController =
+      TextEditingController(text: "Initial Text");
+
+  TabController? _tabController;
+  bool _tabListenerAttached = false;
+
+  void _handleTabChange() {
+    // 탭이 변경되면 키보드 닫기 (탭 클릭/스와이프 모두 대응)
+    FocusScope.of(context).unfocus();
+  }
+
+  void _onSearchChanged(String value) {
+    // 실제 검색 로직은 백엔드/데이터 연동 시 구현
+    // 현재는 입력 이벤트만 처리
+    // ignore: avoid_print
+    print("Searching for $value");
+  }
+
+  void _onSearchSubmitted(String value) {
+    // ignore: avoid_print
+    print("Submitted $value");
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // DefaultTabController가 제공하는 TabController에 리스너 한 번만 등록
+    final controller = DefaultTabController.maybeOf(context);
+    if (controller != null && !_tabListenerAttached) {
+      _tabController = controller;
+      _tabController!.addListener(_handleTabChange);
+      _tabListenerAttached = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController?.removeListener(_handleTabChange);
+    _textEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -26,12 +77,12 @@ class DiscoverScreen extends StatelessWidget {
           automaticallyImplyLeading: false,
           toolbarHeight: 60,
           titleSpacing: 0,
-          title: const Text(
-            'Discover',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: Sizes.size20,
-              fontWeight: FontWeight.w600,
+          title: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: Sizes.size16),
+            child: CupertinoSearchTextField(
+              controller: _textEditingController,
+              onChanged: _onSearchChanged,
+              onSubmitted: _onSearchSubmitted,
             ),
           ),
           bottom: TabBar(
@@ -45,10 +96,11 @@ class DiscoverScreen extends StatelessWidget {
               fontSize: Sizes.size16,
             ),
             indicatorSize: TabBarIndicatorSize.tab,
+            tabAlignment: TabAlignment.start,
             indicatorColor: Colors.black,
             labelColor: Colors.black,
             unselectedLabelColor: Colors.grey.shade500,
-            tabAlignment: TabAlignment.start,
+            onTap: (_) => FocusScope.of(context).unfocus(),
             tabs: [
               for (var tab in tabs)
                 Tab(
@@ -60,6 +112,7 @@ class DiscoverScreen extends StatelessWidget {
         body: TabBarView(
           children: [
             GridView.builder(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               itemCount: 20,
               padding: const EdgeInsets.all(
                 Sizes.size6,
@@ -68,13 +121,71 @@ class DiscoverScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: Sizes.size10,
                 mainAxisSpacing: Sizes.size10,
-                childAspectRatio: 9 / 16,
+                childAspectRatio: 9 / 20,
               ),
-              itemBuilder: (context, index) => Container(
-                color: Colors.teal,
-                child: Center(
-                  child: Text("$index"),
-                ),
+              itemBuilder: (context, index) => Column(
+                children: [
+                  Container(
+                    clipBehavior: Clip.hardEdge,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(Sizes.size4),
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 9 / 16,
+                      child: FadeInImage.assetNetwork(
+                        fit: BoxFit.cover,
+                        placeholder: "assets/images/placeholder.jpg",
+                        image:
+                            "https://images.unsplash.com/photo-1673844969019-c99b0c933e90?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80",
+                      ),
+                    ),
+                  ),
+                  Gaps.v10,
+                  const Text(
+                    "This is a very long caption for my tiktok that im upload just now currently.",
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: TextStyle(
+                      fontSize: Sizes.size14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Gaps.v8,
+                  DefaultTextStyle(
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    child: Row(
+                      children: [
+                        const CircleAvatar(
+                          radius: 12,
+                          backgroundImage: NetworkImage(
+                            "https://avatars.githubusercontent.com/u/3612017",
+                          ),
+                        ),
+                        Gaps.h4,
+                        const Expanded(
+                          child: Text(
+                            "My avatar is going to be very long",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Gaps.h4,
+                        FaIcon(
+                          FontAwesomeIcons.heart,
+                          size: Sizes.size16,
+                          color: Colors.grey.shade600,
+                        ),
+                        Gaps.h2,
+                        const Text(
+                          "2.5M",
+                        )
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
             for (var tab in tabs.skip(1))
