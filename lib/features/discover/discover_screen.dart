@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 
+// 탭 이름 목록
 final tabs = [
   "Top",
   "Users",
@@ -22,25 +23,29 @@ class DiscoverScreen extends StatefulWidget {
 }
 
 class _DiscoverScreenState extends State<DiscoverScreen> {
+  // 검색 입력 관리용 컨트롤러 (반드시 dispose에서 정리)
   final TextEditingController _textEditingController =
       TextEditingController(text: "Initial Text");
 
+  // 탭 전환(탭 클릭/스와이프) 시 키보드를 닫기 위해 TabController 감시
   TabController? _tabController;
   bool _tabListenerAttached = false;
 
+  // 탭 변경 이벤트가 발생하면 포커스를 해제해 키보드를 닫는다
   void _handleTabChange() {
     // 탭이 변경되면 키보드 닫기 (탭 클릭/스와이프 모두 대응)
     FocusScope.of(context).unfocus();
   }
 
   void _onSearchChanged(String value) {
-    // 실제 검색 로직은 백엔드/데이터 연동 시 구현
-    // 현재는 입력 이벤트만 처리
+    // 실제 검색 로직은 데이터 연동 시 구현
+    // 현재는 입력 이벤트만 콘솔 출력
     // ignore: avoid_print
     print("Searching for $value");
   }
 
   void _onSearchSubmitted(String value) {
+    // 제출 시 동작도 동일 (필요 시 검색 실행 트리거)
     // ignore: avoid_print
     print("Submitted $value");
   }
@@ -59,6 +64,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   @override
   void dispose() {
+    // 등록한 리스너 해제 및 컨트롤러 정리
     _tabController?.removeListener(_handleTabChange);
     _textEditingController.dispose();
     super.dispose();
@@ -77,6 +83,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           automaticallyImplyLeading: false,
           toolbarHeight: 60,
           titleSpacing: 0,
+          // 검색창 좌우 여백 부여
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: Sizes.size16),
             child: CupertinoSearchTextField(
@@ -100,6 +107,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             indicatorColor: Colors.black,
             labelColor: Colors.black,
             unselectedLabelColor: Colors.grey.shade500,
+            // 탭을 터치해서 전환할 때도 키보드를 닫는다
             onTap: (_) => FocusScope.of(context).unfocus(),
             tabs: [
               for (var tab in tabs)
@@ -112,6 +120,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         body: TabBarView(
           children: [
             GridView.builder(
+              // 스크롤 드래그 시 키보드가 자동으로 닫히도록 설정
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               itemCount: 20,
               padding: const EdgeInsets.all(
