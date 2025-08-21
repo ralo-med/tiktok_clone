@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/activity_screen.dart';
@@ -31,6 +32,7 @@ class InboxScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
         surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
         scrolledUnderElevation: 0,
         title: const Text('Inbox'),
         actions: [
