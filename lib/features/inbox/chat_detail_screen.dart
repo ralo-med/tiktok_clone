@@ -59,9 +59,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             ),
           ),
           subtitle: const Text('Active now'),
-          trailing: SizedBox(
+          trailing: const SizedBox(
             width: Sizes.size80,
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 FaIcon(
@@ -140,9 +140,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 ),
                 child: Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: TextField(
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: "Send a message...",
                         ),
