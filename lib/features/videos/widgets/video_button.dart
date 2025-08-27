@@ -16,18 +16,19 @@ class VideoButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         FaIcon(
           icon,
           color: Colors.white,
-          size: Sizes.size32,
+          size: Sizes.size28,
         ),
         Gaps.v4,
         Text(
           text,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: Sizes.size12,
+            fontSize: Sizes.size10,
             fontWeight: FontWeight.w600,
           ),
         ),

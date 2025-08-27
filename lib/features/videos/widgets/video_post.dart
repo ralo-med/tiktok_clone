@@ -238,9 +238,10 @@ class _VideoPostState extends State<VideoPost>
             bottom: 20,
             right: 10,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const CircleAvatar(
-                  radius: 25,
+                  radius: 20,
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
                   foregroundImage: NetworkImage(
@@ -248,12 +249,12 @@ class _VideoPostState extends State<VideoPost>
                   ),
                   child: Text("니꼬"),
                 ),
-                Gaps.v24,
+                Gaps.v16,
                 const VideoButton(
                   icon: FontAwesomeIcons.solidHeart,
                   text: "2.9M",
                 ),
-                Gaps.v24,
+                Gaps.v16,
                 GestureDetector(
                   onTap: () => _onCommentsTap(context),
                   child: const VideoButton(
@@ -261,7 +262,7 @@ class _VideoPostState extends State<VideoPost>
                     text: "33K",
                   ),
                 ),
-                Gaps.v24,
+                Gaps.v16,
                 const VideoButton(
                   icon: FontAwesomeIcons.share,
                   text: "Share",

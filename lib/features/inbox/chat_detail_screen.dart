@@ -59,21 +59,24 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             ),
           ),
           subtitle: const Text('Active now'),
-          trailing: const Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FaIcon(
-                FontAwesomeIcons.flag,
-                color: Colors.black,
-                size: Sizes.size20,
-              ),
-              Gaps.h32,
-              FaIcon(
-                FontAwesomeIcons.ellipsis,
-                color: Colors.black,
-                size: Sizes.size20,
-              ),
-            ],
+          trailing: SizedBox(
+            width: Sizes.size80,
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.flag,
+                  color: Colors.black,
+                  size: Sizes.size18,
+                ),
+                Gaps.h20,
+                FaIcon(
+                  FontAwesomeIcons.ellipsis,
+                  color: Colors.black,
+                  size: Sizes.size18,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -130,14 +133,31 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             width: MediaQuery.of(context).size.width,
             child: BottomAppBar(
               color: Colors.grey.shade50,
-              child: Row(
-                children: [
-                  const Expanded(child: TextField()),
-                  Gaps.h20,
-                  Container(
-                    child: const FaIcon(FontAwesomeIcons.paperPlane),
-                  )
-                ],
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Sizes.size14,
+                  vertical: Sizes.size8,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Send a message...",
+                        ),
+                      ),
+                    ),
+                    Gaps.h16,
+                    Container(
+                      padding: const EdgeInsets.all(Sizes.size8),
+                      child: const FaIcon(
+                        FontAwesomeIcons.paperPlane,
+                        size: Sizes.size18,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           )

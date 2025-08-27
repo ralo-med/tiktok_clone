@@ -164,11 +164,12 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                     style: TextStyle(
                       color: Colors.grey.shade600,
                       fontWeight: FontWeight.w600,
+                      fontSize: Sizes.size12,
                     ),
                     child: Row(
                       children: [
                         const CircleAvatar(
-                          radius: 12,
+                          radius: 10,
                           backgroundImage: NetworkImage(
                             "https://avatars.githubusercontent.com/u/3612017",
                           ),
@@ -181,10 +182,10 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        Gaps.h4,
+                        Gaps.h2,
                         FaIcon(
                           FontAwesomeIcons.heart,
-                          size: Sizes.size16,
+                          size: Sizes.size12,
                           color: Colors.grey.shade600,
                         ),
                         Gaps.h2,
