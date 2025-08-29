@@ -46,6 +46,10 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen> {
       await initCamera();
       setState(() {});
     }
+    // TODO: 권한이 없을 때 보여줄 UI를 만들어야 함
+    // - 권한 요청 버튼
+    // - 설정으로 이동하는 버튼
+    // - 권한이 필요한 이유 설명
   }
 
   @override
