@@ -16,8 +16,9 @@ class VideoRecordingScreen extends StatefulWidget {
 }
 
 class _VideoRecordingScreenState extends State<VideoRecordingScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   bool _hasPermission = false;
+  bool _isCheckingPermissions = true;
 
   bool _isSelfieMode = false;
 
@@ -60,9 +61,25 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     await _cameraController.prepareForVideoRecording();
 
     _flashMode = _cameraController.value.flashMode;
+
+    setState(() {});
   }
 
   Future<void> initPermissions() async {
+    // 먼저 현재 권한 상태를 확인
+    final cameraStatus = await Permission.camera.status;
+    final micStatus = await Permission.microphone.status;
+
+    // 이미 권한이 있으면 바로 카메라 초기화
+    if (cameraStatus.isGranted && micStatus.isGranted) {
+      _hasPermission = true;
+      _isCheckingPermissions = false;
+      await initCamera();
+      setState(() {});
+      return;
+    }
+
+    // 권한이 없으면 요청
     final cameraPermission = await Permission.camera.request();
     final micPermission = await Permission.microphone.request();
 
@@ -74,19 +91,44 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
 
     if (!cameraDenied && !micDenied) {
       _hasPermission = true;
+      _isCheckingPermissions = false;
       await initCamera();
       setState(() {});
+    } else {
+      _hasPermission = false;
+      _isCheckingPermissions = false;
+      setState(() {});
     }
-    // TODO: 권한이 없을 때 보여줄 UI를 만들어야 함
-    // - 권한 요청 버튼
-    // - 설정으로 이동하는 버튼
-    // - 권한이 필요한 이유 설명
+  }
+
+  Future<void> _requestPermissions() async {
+    // 권한이 없으면 요청
+    final cameraPermission = await Permission.camera.request();
+    final micPermission = await Permission.microphone.request();
+
+    final cameraDenied =
+        cameraPermission.isDenied || cameraPermission.isPermanentlyDenied;
+
+    final micDenied =
+        micPermission.isDenied || micPermission.isPermanentlyDenied;
+
+    if (!cameraDenied && !micDenied) {
+      _hasPermission = true;
+      _isCheckingPermissions = false;
+      await initCamera();
+      setState(() {});
+    } else {
+      _hasPermission = false;
+      _isCheckingPermissions = false;
+      setState(() {});
+    }
   }
 
   @override
   void initState() {
     super.initState();
     initPermissions();
+    WidgetsBinding.instance.addObserver(this);
     _progressAnimationController.addListener(() {
       setState(() {});
     });
@@ -102,7 +144,19 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
     _progressAnimationController.dispose();
     _buttonAnimationController.dispose();
     _cameraController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!_hasPermission) return;
+    if (!_cameraController.value.isInitialized) return;
+    if (state == AppLifecycleState.inactive) {
+      _cameraController.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      initCamera();
+    }
   }
 
   Future<void> _toggleSelfieMode() async {
@@ -153,13 +207,13 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
       backgroundColor: Colors.black,
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
-        child: !_hasPermission || !_cameraController.value.isInitialized
+        child: _isCheckingPermissions
             ? const Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Initializing...",
+                    "권한 확인 중...",
                     style:
                         TextStyle(color: Colors.white, fontSize: Sizes.size20),
                   ),
@@ -167,82 +221,127 @@ class _VideoRecordingScreenState extends State<VideoRecordingScreen>
                   CircularProgressIndicator.adaptive()
                 ],
               )
-            : Stack(
-                alignment: Alignment.center,
-                children: [
-                  CameraPreview(_cameraController),
-                  Positioned(
-                    top: Sizes.size20,
-                    right: Sizes.size20,
-                    child: Column(
-                      children: [
-                        IconButton(
-                          color: Colors.white,
-                          onPressed: _toggleSelfieMode,
-                          icon: const Icon(
-                            Icons.cameraswitch,
+            : !_hasPermission
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "카메라와 마이크 권한이 필요합니다",
+                        style: TextStyle(
+                            color: Colors.white, fontSize: Sizes.size20),
+                        textAlign: TextAlign.center,
+                      ),
+                      Gaps.v20,
+                      const Text(
+                        "비디오를 촬영하기 위해 카메라와 마이크 권한을 허용해주세요",
+                        style: TextStyle(
+                            color: Colors.white70, fontSize: Sizes.size16),
+                        textAlign: TextAlign.center,
+                      ),
+                      Gaps.v20,
+                      ElevatedButton(
+                        onPressed: _requestPermissions,
+                        child: const Text("권한 다시 요청"),
+                      ),
+                      Gaps.v10,
+                      ElevatedButton(
+                        onPressed: () => openAppSettings(),
+                        child: const Text("설정으로 이동"),
+                      ),
+                    ],
+                  )
+                : !_cameraController.value.isInitialized
+                    ? const Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "카메라 초기화 중...",
+                            style: TextStyle(
+                                color: Colors.white, fontSize: Sizes.size20),
                           ),
-                        ),
-                        Gaps.v10,
-                        FlashModeWidget(
-                          currentFlashMode: _flashMode,
-                          onFlashModeChanged: _setFlashMode,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    bottom: Sizes.size40,
-                    width: MediaQuery.of(context).size.width,
-                    child: Row(
-                      children: [
-                        const Spacer(),
-                        GestureDetector(
-                          onTapDown: _starRecording,
-                          onTapUp: (details) => _stopRecording(),
-                          child: ScaleTransition(
-                            scale: _buttonAnimation,
-                            child: Stack(
-                              alignment: Alignment.center,
+                          Gaps.v20,
+                          CircularProgressIndicator.adaptive()
+                        ],
+                      )
+                    : Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CameraPreview(_cameraController),
+                          Positioned(
+                            top: Sizes.size20,
+                            right: Sizes.size20,
+                            child: Column(
                               children: [
-                                SizedBox(
-                                  width: Sizes.size80 + Sizes.size14,
-                                  height: Sizes.size80 + Sizes.size14,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.red.shade400,
-                                    strokeWidth: Sizes.size6,
-                                    value: _progressAnimationController.value,
+                                IconButton(
+                                  color: Colors.white,
+                                  onPressed: _toggleSelfieMode,
+                                  icon: const Icon(
+                                    Icons.cameraswitch,
                                   ),
                                 ),
-                                Container(
-                                  width: Sizes.size80,
-                                  height: Sizes.size80,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.red.shade400,
-                                  ),
+                                Gaps.v10,
+                                FlashModeWidget(
+                                  currentFlashMode: _flashMode,
+                                  onFlashModeChanged: _setFlashMode,
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: IconButton(
-                              onPressed: _onPickVideoPressed,
-                              icon: const FaIcon(
-                                FontAwesomeIcons.image,
-                                color: Colors.white,
-                              ),
+                          Positioned(
+                            bottom: Sizes.size40,
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                              children: [
+                                const Spacer(),
+                                GestureDetector(
+                                  onTapDown: _starRecording,
+                                  onTapUp: (details) => _stopRecording(),
+                                  child: ScaleTransition(
+                                    scale: _buttonAnimation,
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: Sizes.size80 + Sizes.size14,
+                                          height: Sizes.size80 + Sizes.size14,
+                                          child: CircularProgressIndicator(
+                                            color: Colors.red.shade400,
+                                            strokeWidth: Sizes.size6,
+                                            value: _progressAnimationController
+                                                .value,
+                                          ),
+                                        ),
+                                        Container(
+                                          width: Sizes.size80,
+                                          height: Sizes.size80,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.red.shade400,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: IconButton(
+                                      onPressed: _onPickVideoPressed,
+                                      icon: const FaIcon(
+                                        FontAwesomeIcons.image,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                          )
+                        ],
+                      ),
       ),
     );
   }
