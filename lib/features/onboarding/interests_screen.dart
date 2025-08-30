@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/onboarding/widgets/interest_button.dart';
+import 'package:tiktok_clone/utils.dart';
 import 'package:tiktok_clone/features/onboarding/turotial_screen.dart';
 
 const interests = [
@@ -177,7 +178,7 @@ class _InterestsScreenState extends State<InterestsScreen> {
         ),
       ),
       bottomNavigationBar: Container(
-        color: Colors.grey.shade100,
+        color: isDarkMode(context) ? Colors.black : Colors.grey.shade100,
         padding: const EdgeInsets.only(
           bottom: Sizes.size32, // bottom은 그대로
           top: Sizes.size20, // top을 줄임 (32에서 16으로)
@@ -192,7 +193,9 @@ class _InterestsScreenState extends State<InterestsScreen> {
             ),
             decoration: BoxDecoration(
               color: _selectedInterests.isEmpty
-                  ? Colors.grey.shade300
+                  ? (isDarkMode(context)
+                      ? Colors.grey.shade800
+                      : Colors.grey.shade300)
                   : Theme.of(context).primaryColor,
               borderRadius: BorderRadius.circular(Sizes.size5),
             ),
