@@ -10,12 +10,14 @@ import 'package:tiktok_clone/utils.dart';
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});
 
-  void onLogInTap(BuildContext context) {
-    Navigator.of(context).push(
+  void _onLoginTap(BuildContext context) async {
+    final result = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const LoginScreen(),
       ),
+      //LoginScreen에서 Navigator.pop()으로 전달된 데이터를 콘솔에 출력
     );
+    print(result);
   }
 
   void onEmailTap(BuildContext context) {
@@ -95,7 +97,7 @@ class SignUpScreen extends StatelessWidget {
             ),
             Gaps.h5,
             GestureDetector(
-              onTap: () => onLogInTap(context),
+              onTap: () => _onLoginTap(context),
               child: Text(
                 'Log in',
                 style: TextStyle(
