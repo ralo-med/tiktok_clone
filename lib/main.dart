@@ -16,7 +16,7 @@ class TikTokApp extends StatelessWidget {
       title: 'TikTok Clone',
       themeMode: ThemeMode.system,
       theme: ThemeData(
-        textTheme: Typography.whiteMountainView,
+        textTheme: Typography.blackMountainView,
         scaffoldBackgroundColor: AppColors.light.surface,
         brightness: Brightness.light,
         primaryColor: const Color(0xFFFE2C55),
