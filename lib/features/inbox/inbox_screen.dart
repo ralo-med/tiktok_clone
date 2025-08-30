@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
 import 'package:tiktok_clone/features/inbox/activity_screen.dart';
 import 'package:tiktok_clone/features/inbox/chat_screen.dart';
+import 'package:tiktok_clone/theme.dart';
 
 class InboxScreen extends StatelessWidget {
   const InboxScreen({super.key});
@@ -26,15 +27,18 @@ class InboxScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: colors.surfaceDark,
         surfaceTintColor: Colors.transparent,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle:
+            isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         scrolledUnderElevation: 0,
-        title: const Text('Inbox'),
+        title: Text('Inbox', style: TextStyle(color: colors.surfaceDark)),
         actions: [
           IconButton(
             onPressed: () => _onDmPressed(context),
@@ -47,7 +51,7 @@ class InboxScreen extends StatelessWidget {
           preferredSize: const Size.fromHeight(1),
           child: Container(
             height: 1,
-            color: Colors.grey.shade200,
+            color: isDark ? colors.border : Colors.grey.shade200,
           ),
         ),
       ),
@@ -65,19 +69,23 @@ class InboxScreen extends StatelessWidget {
             trailing: const FaIcon(
               FontAwesomeIcons.chevronRight,
               size: Sizes.size14,
-              color: Colors.black,
+              // color will be inherited; override with theme below by removing const
             ),
           ),
           Container(
             height: Sizes.size1,
-            color: Colors.grey.shade200,
+            color: isDark ? colors.border : Colors.grey.shade200,
           ),
           ListTile(
             leading: Container(
               width: Sizes.size52,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.blue,
+                color: isDark ? colors.surface : Colors.blue,
+                border: Border.all(
+                  color: isDark ? colors.border : Colors.grey.shade400,
+                  width: Sizes.size1,
+                ),
               ),
               child: const Center(
                 child: FaIcon(
@@ -99,10 +107,10 @@ class InboxScreen extends StatelessWidget {
                 fontSize: Sizes.size14,
               ),
             ),
-            trailing: const FaIcon(
+            trailing: FaIcon(
               FontAwesomeIcons.chevronRight,
               size: Sizes.size14,
-              color: Colors.black,
+              color: colors.surfaceDark,
             ),
           )
         ],
