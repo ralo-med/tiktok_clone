@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tiktok_clone/constants/gaps.dart';
 import 'package:tiktok_clone/constants/sizes.dart';
+import 'package:tiktok_clone/theme.dart';
 
 // 탭 이름 목록
 final tabs = [
@@ -72,12 +73,13 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: colors.surface,
           elevation: 0,
           centerTitle: true,
           automaticallyImplyLeading: false,
@@ -90,6 +92,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               controller: _textEditingController,
               onChanged: _onSearchChanged,
               onSubmitted: _onSearchSubmitted,
+              backgroundColor: colors.grey100,
             ),
           ),
           bottom: TabBar(
@@ -104,9 +107,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             ),
             indicatorSize: TabBarIndicatorSize.tab,
             tabAlignment: TabAlignment.start,
-            indicatorColor: Colors.black,
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.grey.shade500,
+            indicatorColor: colors.surfaceDark,
+            labelColor: colors.surfaceDark,
+            unselectedLabelColor: colors.mutedText,
             // 탭을 터치해서 전환할 때도 키보드를 닫는다
             onTap: (_) => FocusScope.of(context).unfocus(),
             tabs: [
@@ -150,19 +153,20 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                     ),
                   ),
                   Gaps.v10,
-                  const Text(
+                  Text(
                     "This is a very long caption for my tiktok that im upload just now currently.",
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                     style: TextStyle(
                       fontSize: Sizes.size14,
                       fontWeight: FontWeight.bold,
+                      color: colors.surfaceDark,
                     ),
                   ),
                   Gaps.v8,
                   DefaultTextStyle(
                     style: TextStyle(
-                      color: Colors.grey.shade600,
+                      color: colors.mutedText,
                       fontWeight: FontWeight.w600,
                       fontSize: Sizes.size12,
                     ),
@@ -186,7 +190,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                         FaIcon(
                           FontAwesomeIcons.heart,
                           size: Sizes.size12,
-                          color: Colors.grey.shade600,
+                          color: colors.mutedText,
                         ),
                         Gaps.h2,
                         const Text(
@@ -202,8 +206,9 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               Center(
                 child: Text(
                   tab,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 28,
+                    color: colors.surfaceDark,
                   ),
                 ),
               )

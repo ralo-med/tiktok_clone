@@ -9,6 +9,7 @@ import 'package:tiktok_clone/features/main_navigation/widgets/post_video_button.
 import 'package:tiktok_clone/features/users/user_profile_screen.dart';
 import 'package:tiktok_clone/features/videos/video_timeline_screen.dart';
 import 'package:tiktok_clone/features/videos/video_recording_screen.dart';
+import 'package:tiktok_clone/theme.dart';
 
 class MainNavigationScreen extends StatefulWidget {
   const MainNavigationScreen({super.key});
@@ -37,6 +38,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -60,7 +63,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        color: _selectedIndex == 0 ? Colors.black : Colors.white,
+        color: colors.surface,
         child: SafeArea(
           top: false,
           child: Padding(
@@ -74,7 +77,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   icon: FontAwesomeIcons.house,
                   selectedIcon: FontAwesomeIcons.house,
                   onTap: () => _onTap(0),
-                  isDarkMode: _selectedIndex == 0,
+                  isDarkMode: isDark,
                 ),
                 NavTab(
                   text: "Discover",
@@ -82,13 +85,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   icon: FontAwesomeIcons.compass,
                   selectedIcon: FontAwesomeIcons.solidCompass,
                   onTap: () => _onTap(1),
-                  isDarkMode: _selectedIndex == 0,
+                  isDarkMode: isDark,
                 ),
                 Gaps.h24,
                 GestureDetector(
                   onTap: _onPostVideoButtonTap,
                   child: PostVideoButton(
-                    isDarkMode: _selectedIndex == 0,
+                    isDarkMode: isDark,
                   ),
                 ),
                 Gaps.h24,
@@ -98,7 +101,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   icon: FontAwesomeIcons.message,
                   selectedIcon: FontAwesomeIcons.solidMessage,
                   onTap: () => _onTap(3),
-                  isDarkMode: _selectedIndex == 0,
+                  isDarkMode: isDark,
                 ),
                 NavTab(
                   text: "Profile",
@@ -106,7 +109,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                   icon: FontAwesomeIcons.user,
                   selectedIcon: FontAwesomeIcons.solidUser,
                   onTap: () => _onTap(4),
-                  isDarkMode: _selectedIndex == 0,
+                  isDarkMode: isDark,
                 ),
               ],
             ),
